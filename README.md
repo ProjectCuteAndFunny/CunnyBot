@@ -42,4 +42,5 @@ Discord.NET.Rest
 Discord.NET.WebSocket
 Microsoft.Extensions.DependencyInjection
 Microsoft.Extensions.Hosting
+Newtonsoft.Json
 ```
