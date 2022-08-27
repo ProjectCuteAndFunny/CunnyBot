@@ -396,7 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-*.slln.DotSettings
+*.sln.DotSettings
+*.sln.DotSettings.user
 
 bin/
 idea/
