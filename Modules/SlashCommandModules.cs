@@ -50,12 +50,20 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	{
 		await DeferAsync(ephemeral: true, options: _options);
 		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{tags}/{images}";
-		var response = await Client.GetStringAsync(url);
+		string response = null;
+		try { response = await Client.GetStringAsync(url); }
+		catch (HttpRequestException e)
+		{
+			if (e.Message.Contains("500")) await FollowupAsync("Invalid tags", options: _options, ephemeral: true);
+			else await FollowupAsync(
+				$"Couldn't post the {(images == 1 ? "image" : "images")}.\nThis is either because **{site}** is down or the **CunnyAPI** is down.\n*Please try again later*",
+				options: _options,
+				ephemeral: true); 
+		}
 		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response);
 		foreach (var item in jsonResponse!)
-			await FollowupAsync(embed: Embed.WithAuthor($"Poster: {item.OwnerName}")
-				.WithColor((uint)new Random().Next(0, 16777215))
-				.WithDescription($"W: {item.Width}H: {item.Height}")
+			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
+				.WithFooter($"{item.Width}x{item.Height}")
 				.WithImageUrl(item.ImageUrl)
 				.WithTitle(item.Id.ToString())
 				.WithUrl(item.PostUrl)
@@ -63,7 +71,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 				options: _options,
 				ephemeral: true);
 	}
-	
+
 	/// <summary>
 	/// Gets images for an anime gacha game "Blue Archive" from a selected site.
 	/// </summary>
@@ -77,8 +85,9 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Safebooru", "safebooru")]
 		[Choice("Danbooru", "danbooru")]
 		[Choice("Konachan", "konachan")]
-		[Choice("Yandere", "yandere")] string site,
-		[Choice("Alice", "alice_(blue_archive)")] 
+		[Choice("Yandere", "yandere")]
+		string site,
+		[Choice("Alice", "alice_(blue_archive)")]
 		[Choice("Aru", "aru_(blue_archive)")]
 		[Choice("Hanae", "hanae_(blue_archive)")]
 		[Choice("Hanko", "hanko_(blue_archive)")]
@@ -98,24 +107,30 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Neru", "neru_(blue_archive)")]
 		[Choice("Nonomi", "nonomi_(blue_archive)")]
 		[Choice("Pina", "pina_(blue_archive)")]
-		[Choice("Serika", "serika_(blue_archive)")] string character, 
-		[MinValue(1)] [MaxValue(100)]
-		int images
-		) 
+		[Choice("Serika", "serika_(blue_archive)")]
+		string character,
+		[MinValue(1)] [MaxValue(100)] int images
+	)
 	{
 		await DeferAsync(ephemeral: true, options: _options);
 		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{character}/{images}";
-		var response = await Client.GetStringAsync(url);
-		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response);
-		foreach (var item in jsonResponse!)
-			await FollowupAsync(embed: Embed.WithAuthor($"Poster: {item.OwnerName}")
-				.WithColor((uint)new Random().Next(0, 16777215))
-				.WithDescription($"W: {item.Width}H: {item.Height}")
-				.WithImageUrl(item.ImageUrl)
-				.WithTitle(item.Id.ToString())
-				.WithUrl(item.PostUrl)
-				.Build(),
+		string? response = null;
+		try { response = await Client.GetStringAsync(url); }
+		catch (HttpRequestException) {
+			await FollowupAsync(
+				$"Couldn't post the {(images == 1 ? "image" : "images")}.\nThis is either because **{site}** is down or the **CunnyAPI** is down.\n*Please try again later*",
 				options: _options,
 				ephemeral: true); 
+		}
+		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response!);
+		foreach (var item in jsonResponse!)
+			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
+					.WithFooter($"{item.Width}x{item.Height}")
+					.WithImageUrl(item.ImageUrl)
+					.WithTitle(item.Id.ToString())
+					.WithUrl(item.PostUrl)
+					.Build(),
+				options: _options,
+				ephemeral: true);
 	}
 }
