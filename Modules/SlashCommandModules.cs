@@ -43,10 +43,9 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Safebooru", "safebooru")]
 		[Choice("Danbooru", "danbooru")]
 		[Choice("Konachan", "konachan")]
-		[Choice("Yandere", "yandere")]
-		string site, string tags,
-		[MinValue(1)] [MaxValue(100)]
-		int images)
+		[Choice("Yandere", "yandere")] string site, 
+		string tags,
+		[MinValue(1)] [MaxValue(100)] int images)
 	{
 		await DeferAsync(ephemeral: true, options: _options);
 		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{tags}/{images}";
@@ -107,8 +106,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Neru", "neru_(blue_archive)")]
 		[Choice("Nonomi", "nonomi_(blue_archive)")]
 		[Choice("Pina", "pina_(blue_archive)")]
-		[Choice("Serika", "serika_(blue_archive)")]
-		string character,
+		[Choice("Serika", "serika_(blue_archive)")] string character,
 		[MinValue(1)] [MaxValue(100)] int images
 	)
 	{
