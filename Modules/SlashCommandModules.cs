@@ -17,6 +17,9 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		UseSystemClock = false,
 	};
 
+	/// <summary>
+	/// Allows the owner of the bot to, shut down the bot.
+	/// </summary>
 	[SlashCommand("shutdown", "Shutdowns the bot")]
 	[RequireOwner]
 	// ReSharper disable once UnusedMember.Global
@@ -27,6 +30,12 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		Environment.Exit(0);
 	}
 	
+	/// <summary>
+	/// Gets anime images based on tags from the CunnyAPI
+	/// </summary>
+	/// <param name="site">Site to parse from</param>
+	/// <param name="tags">Tags to parse for</param>
+	/// <param name="images">Amount of images to post</param>
 	[SlashCommand("cunny", "Returns the anime images")]
 	// ReSharper disable once UnusedMember.Global
 	public async Task Cunny(
@@ -35,15 +44,18 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Danbooru", "danbooru")]
 		[Choice("Konachan", "konachan")]
 		[Choice("Yandere", "yandere")]
-		string site, string tags, int images)
+		string site, string tags,
+		[MinValue(1)] [MaxValue(100)]
+		int images)
 	{
 		await DeferAsync(ephemeral: true, options: _options);
 		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{tags}/{images}";
 		var response = await Client.GetStringAsync(url);
 		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response);
 		foreach (var item in jsonResponse!)
-			await FollowupAsync(embed: Embed.WithAuthor(item.OwnerName)
+			await FollowupAsync(embed: Embed.WithAuthor($"Poster: {item.OwnerName}")
 				.WithColor((uint)new Random().Next(0, 16777215))
+				.WithDescription($"W: {item.Width}H: {item.Height}")
 				.WithImageUrl(item.ImageUrl)
 				.WithTitle(item.Id.ToString())
 				.WithUrl(item.PostUrl)
@@ -51,13 +63,13 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 				options: _options,
 				ephemeral: true);
 	}
-
+	
 	/// <summary>
-	/// Fetches images for characters from the anime gacha game "Blue Archive".
+	/// Gets images for an anime gacha game "Blue Archive" from a selected site.
 	/// </summary>
-	/// <param name="site">From which site to fetch images.</param>
-	/// <param name="character">Which character to search for</param>
-	/// <param name="images">How many images to fetch</param>
+	/// <param name="site">Site to parse from</param>
+	/// <param name="character">Character to parse for</param>
+	/// <param name="images">Amount of images to post</param>
 	[SlashCommand("blue", "Returns images of blue archive")]
 	// ReSharper disable once UnusedMember.Global
 	public async Task Blue(
@@ -86,8 +98,10 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Neru", "neru_(blue_archive)")]
 		[Choice("Nonomi", "nonomi_(blue_archive)")]
 		[Choice("Pina", "pina_(blue_archive)")]
-		[Choice("Serika", "serika_(blue_archive)")] string character, int images
-	) 
+		[Choice("Serika", "serika_(blue_archive)")] string character, 
+		[MinValue(1)] [MaxValue(100)]
+		int images
+		) 
 	{
 		await DeferAsync(ephemeral: true, options: _options);
 		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{character}/{images}";
@@ -96,6 +110,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		foreach (var item in jsonResponse!)
 			await FollowupAsync(embed: Embed.WithAuthor($"Poster: {item.OwnerName}")
 				.WithColor((uint)new Random().Next(0, 16777215))
+				.WithDescription($"W: {item.Width}H: {item.Height}")
 				.WithImageUrl(item.ImageUrl)
 				.WithTitle(item.Id.ToString())
 				.WithUrl(item.PostUrl)
