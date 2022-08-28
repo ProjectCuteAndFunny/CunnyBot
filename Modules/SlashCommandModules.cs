@@ -10,12 +10,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 {
 	private HttpClient Client { get; } = new();
 	private EmbedBuilder Embed { get; } = new();
-	private readonly RequestOptions _options = new()
-	{
-		Timeout = 3000,
-		RetryMode = RetryMode.AlwaysRetry,
-		UseSystemClock = false,
-	};
+	private readonly RequestOptions _options = new() { Timeout = 3000, RetryMode = RetryMode.AlwaysRetry, UseSystemClock = false };
 
 	/// <summary>
 	/// Allows the owner of the bot to, shut down the bot.
@@ -49,7 +44,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	{
 		await DeferAsync(ephemeral: true, options: _options);
 		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{tags}/{images}";
-		string response = null;
+		string? response = null;
 		try { response = await Client.GetStringAsync(url); }
 		catch (HttpRequestException e)
 		{
@@ -59,7 +54,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 				options: _options,
 				ephemeral: true); 
 		}
-		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response);
+		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response!);
 		foreach (var item in jsonResponse!)
 			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
 				.WithFooter($"{item.Width}x{item.Height}")
@@ -84,8 +79,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Safebooru", "safebooru")]
 		[Choice("Danbooru", "danbooru")]
 		[Choice("Konachan", "konachan")]
-		[Choice("Yandere", "yandere")]
-		string site,
+		[Choice("Yandere", "yandere")] string site,
 		[Choice("Alice", "alice_(blue_archive)")]
 		[Choice("Aru", "aru_(blue_archive)")]
 		[Choice("Hanae", "hanae_(blue_archive)")]
@@ -107,8 +101,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Nonomi", "nonomi_(blue_archive)")]
 		[Choice("Pina", "pina_(blue_archive)")]
 		[Choice("Serika", "serika_(blue_archive)")] string character,
-		[MinValue(1)] [MaxValue(100)] int images
-	)
+		[MinValue(1)] [MaxValue(100)] int images)
 	{
 		await DeferAsync(ephemeral: true, options: _options);
 		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{character}/{images}";
