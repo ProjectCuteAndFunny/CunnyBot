@@ -1,4 +1,4 @@
-﻿using CunnyBot.Loggers;
+using CunnyBot.Loggers;
 using CunnyBot.Services;
 using Discord;
 using Discord.Commands;
@@ -10,9 +10,8 @@ using static Microsoft.Extensions.Hosting.Host;
 
 var host = CreateDefaultBuilder()
     .ConfigureServices((_,
-        services) => services.AddSingleton(_ => new DiscordSocketClient(new DiscordSocketConfig
-        {
-            GatewayIntents = GatewayIntents.Guilds | GatewayIntents.DirectMessages,
+        services) => services.AddSingleton(_ => new DiscordSocketClient(new DiscordSocketConfig { 
+            GatewayIntents = GatewayIntents.Guilds | GatewayIntents.DirectMessages, 
             AlwaysDownloadUsers = true,
             LogLevel = LogSeverity.Info,
             UseSystemClock = true, // Change this to false only if you suspect the operating system on which the bot is running may have desynchronized the system clock.
@@ -21,8 +20,7 @@ var host = CreateDefaultBuilder()
         .AddTransient<ConsoleLogger>()
         .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
         .AddSingleton<InteractionHandler>()
-        .AddSingleton(_ => new CommandService(new CommandServiceConfig
-        {
+        .AddSingleton(_ => new CommandService(new CommandServiceConfig {
             LogLevel = LogSeverity.Info,
             DefaultRunMode = Discord.Commands.RunMode.Async
         })))
