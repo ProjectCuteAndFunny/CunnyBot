@@ -25,9 +25,9 @@ The bot can simply be run by running **``dotnet run``** at the root directory of
 Another option is to use **``dotnet publish``** You can read more about this at [**dotnet publish**](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish)
 
 # Notes
-The bot token is kept as an environment variable named: ``"DISCORD_TOKEN"``.
+The bot token is kept as an environment variable named: **``DISCORD_TOKEN``**.
 
-For registering a guild specific command, the id of the guild must be kept as an environment variable named: ``DISCORD_GUILD``
+For registering a guild specific command, the id of the guild must be kept as an environment variable named: **``DISCORD_GUILD``**
 
 Every slash command has the **``ephemeral``** set to **``true``** this means that nobody else can see or know that a user has run a slash command; only the person who ran the command can see the response. 
 
