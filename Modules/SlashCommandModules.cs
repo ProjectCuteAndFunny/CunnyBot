@@ -10,7 +10,12 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 {
 	private HttpClient Client { get; } = new();
 	private EmbedBuilder Embed { get; } = new();
-	private readonly RequestOptions _options = new() { Timeout = 3000, RetryMode = RetryMode.AlwaysRetry, UseSystemClock = false };
+	private readonly RequestOptions _options = new()
+	{
+		Timeout = 3000, 
+		RetryMode = RetryMode.RetryRatelimit | RetryMode.Retry502 | RetryMode.RetryTimeouts,
+		UseSystemClock = false
+	};
 
 	/// <summary>
 	/// Allows the owner of the bot to, shut down the bot.
@@ -18,8 +23,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	[SlashCommand("shutdown", "Shutdowns the bot")]
 	[RequireOwner]
 	// ReSharper disable once UnusedMember.Global
-	public async Task Shutdown()
-	{
+	public async Task Shutdown() {
 		await DeferAsync(ephemeral: true);
 		await FollowupAsync("Shutting down...", ephemeral: true);
 		Environment.Exit(0);
@@ -38,22 +42,23 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Safebooru", "safebooru")]
 		[Choice("Danbooru", "danbooru")]
 		[Choice("Konachan", "konachan")]
-		[Choice("Yandere", "yandere")] string site, 
+		[Choice("Yandere", "yandere")] string site,
 		string tags,
 		[MinValue(1)] [MaxValue(100)] int images)
 	{
 		await DeferAsync(ephemeral: true, options: _options);
 		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{tags}/{images}";
+		
 		string? response = null;
 		try { response = await Client.GetStringAsync(url); }
-		catch (HttpRequestException e)
-		{
+		catch (HttpRequestException e) { 
 			if (e.Message.Contains("500")) await FollowupAsync("Invalid tags", options: _options, ephemeral: true);
 			else await FollowupAsync(
 				$"Couldn't post the {(images == 1 ? "image" : "images")}.\nThis is either because **{site}** is down or the **CunnyAPI** is down.\n*Please try again later*",
 				options: _options,
 				ephemeral: true); 
 		}
+		
 		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response!);
 		foreach (var item in jsonResponse!)
 			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
@@ -105,6 +110,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	{
 		await DeferAsync(ephemeral: true, options: _options);
 		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{character}/{images}";
+		
 		string? response = null;
 		try { response = await Client.GetStringAsync(url); }
 		catch (HttpRequestException) {
@@ -113,6 +119,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 				options: _options,
 				ephemeral: true); 
 		}
+		
 		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response!);
 		foreach (var item in jsonResponse!)
 			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
