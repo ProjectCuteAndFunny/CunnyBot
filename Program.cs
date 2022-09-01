@@ -13,15 +13,17 @@ var host = CreateDefaultBuilder()
         services) => services.AddSingleton(_ => new DiscordSocketClient(new DiscordSocketConfig { 
             GatewayIntents = GatewayIntents.Guilds | GatewayIntents.DirectMessages, 
             AlwaysDownloadUsers = true,
-            LogLevel = LogSeverity.Info,
-            UseSystemClock = true, // Change this to false only if you suspect the operating system on which the bot is running may have desynchronized the system clock.
+            // ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
+            LogLevel = LogSeverity.Warning | LogSeverity.Error,
+            UseSystemClock = true, // Change this value to false only if you suspect that the operating system on which the bot is running has desynchronized the system clock. 
             MessageCacheSize = 0
         }))
         .AddTransient<ConsoleLogger>()
         .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
         .AddSingleton<InteractionHandler>()
         .AddSingleton(_ => new CommandService(new CommandServiceConfig {
-            LogLevel = LogSeverity.Info,
+            // ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
+            LogLevel = LogSeverity.Info | LogSeverity.Error,
             DefaultRunMode = Discord.Commands.RunMode.Async
         })))
     .Build();
