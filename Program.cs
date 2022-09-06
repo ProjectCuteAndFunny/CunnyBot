@@ -38,10 +38,10 @@ client.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
 commands.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
 
 // Resister commands to a specific guild
-// client.Ready += async () => await commands.RegisterCommandsToGuildAsync(Convert.ToUInt64(GetEnvironmentVariable("DISCORD_GUILD")));
+// client.Ready += async () => await commands.RegisterCommandsToGuildAsync(Convert.ToUInt64(GetEnvironmentVariable("CUNNY_GUILD")));
 // Registers commands globally
 // client.Ready += async () => await commands.RegisterCommandsGloballyAsync();
 
-await client.LoginAsync(TokenType.Bot, GetEnvironmentVariable("DISCORD_TOKEN"));
+await client.LoginAsync(TokenType.Bot, GetEnvironmentVariable("CUNNY_TOKEN"));
 await client.StartAsync();
 await Task.Delay(-1);
