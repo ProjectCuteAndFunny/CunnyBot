@@ -40,11 +40,11 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	[Alias("anime")]
 	// ReSharper disable once UnusedMember.Global
 	public async Task Cunny(
-		[Choice("Danbooru", "gelbooru")]
-		[Choice("Gelbooru", "safebooru")]
-		[Choice("Konachan", "danbooru")]
-		[Choice("Safebooru", "konachan")]
-		[Choice("Yandere", "yandere")] string site, 
+		[Choice("Danbooru", "danbooru")]
+		[Choice("Gelbooru", "gelbooru")]
+		[Choice("Konachan", "konachan")]
+		[Choice("Safebooru", "safebooru")]
+		[Choice("Yandere", "yandere")] string site,
 		string tags,
 		[MinValue(1)] [MaxValue(100)] int images)
 	{
@@ -84,10 +84,10 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	[SlashCommand("blue-archive", "Returns images of blue archive")]
 	// ReSharper disable once UnusedMember.Global
 	public async Task Blue(
-		[Choice("Danbooru", "gelbooru")]
-		[Choice("Gelbooru", "safebooru")]
-		[Choice("Konachan", "danbooru")]
-		[Choice("Safebooru", "konachan")]
+		[Choice("Danbooru", "danbooru")]
+		[Choice("Gelbooru", "gelbooru")]
+		[Choice("Konachan", "konachan")]
+		[Choice("Safebooru", "safebooru")]
 		[Choice("Yandere", "yandere")] string site,
 		[Choice("Alice", "alice_(blue_archive)")]
 		[Choice("Aru", "aru_(blue_archive)")]
@@ -147,10 +147,10 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	[SlashCommand("vtuber", "Returns images of VTubers")]
 	// ReSharper disable once UnusedMember.Global
 	public async Task VTubers(
-		[Choice("Danbooru", "gelbooru")]
-		[Choice("Gelbooru", "safebooru")]
-		[Choice("Konachan", "danbooru")]
-		[Choice("Safebooru", "konachan")]
+		[Choice("Danbooru", "danbooru")]
+		[Choice("Gelbooru", "gelbooru")]
+		[Choice("Konachan", "konachan")]
+		[Choice("Safebooru", "safebooru")]
 		[Choice("Yandere", "yandere")] string site,
 		[Choice("Gura", "gawr_gura")]
 		[Choice("Aqua", "minato_aqua")]
@@ -196,10 +196,10 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	[SlashCommand("genshin-impact", "Returns images of Genshin Impact")]
 	// ReSharper disable once UnusedMember.Global
 	public async Task GenshinImpact(
-		[Choice("Danbooru", "gelbooru")]
-		[Choice("Gelbooru", "safebooru")]
-		[Choice("Konachan", "danbooru")]
-		[Choice("Safebooru", "konachan")]
+		[Choice("Danbooru", "danbooru")]
+		[Choice("Gelbooru", "gelbooru")]
+		[Choice("Konachan", "konachan")]
+		[Choice("Safebooru", "safebooru")]
 		[Choice("Yandere", "yandere")] string site,
 		[Choice("Diona","diona_(genshin_impact)")]
 		[Choice("Dori","dori_(genshin_impact)")]
