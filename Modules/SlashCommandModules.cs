@@ -156,7 +156,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Aqua", "minato_aqua")]
 		[Choice("Ayame", "nakiri_ayame")]
 		[Choice("Kooyori", "hakui_koyori")]
-		[Choice("Laplus", "la+_darknesss")]
+		[Choice("Laplus", "laplus_darknesss")]
 		[Choice("Rushia", "uruha_rushia")] 
 		[Choice("Shion", "murasaki_shion")] string vtuber,
 		[MinValue(1)] [MaxValue(100)] int images)
