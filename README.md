@@ -31,6 +31,8 @@ Another option is to use **``dotnet publish``** You can read more about this at 
 # Notes
 The bot token is kept as an environment variable named: ``CUNNY_TOKEN``.
 
+The bot needs [CunnyAPI](https://github.com/ProjectCuteAndFunny/CunnyApi) to work fetch images, the bot gets the url from environment variable named: ``CUNNY_API_URL``
+
 For registering a guild specific command, the id of the guild must be kept as an environment variable named: ``CUNNY_GUILD``
 
 Every slash command has the **``ephemeral``** set to **``true``** this means that nobody else can see or know that a user has run a slash command; only the person who ran the command can see the response. 
