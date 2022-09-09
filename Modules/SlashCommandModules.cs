@@ -45,11 +45,11 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Konachan", "konachan")]
 		[Choice("Safebooru", "safebooru")]
 		[Choice("Yandere", "yandere")] string site,
-		string tags,
+		[Discord.Interactions.Summary(description: "You can combine multiple tags like this: blue_eyes skirt")]string tags,
 		[MinValue(1)] [MaxValue(100)] int images)
 	{
 		await DeferAsync(ephemeral: true, options: _options);
-		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{tags}/{images}";
+		var url = $"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}{site}/{tags}/{images}";
 		
 		string? response = null;
 		try { response = await Client.GetStringAsync(url); }
@@ -89,15 +89,15 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Konachan", "konachan")]
 		[Choice("Safebooru", "safebooru")]
 		[Choice("Yandere", "yandere")] string site,
-		[Choice("Alice", "alice_(blue_archive)")]
+		[Choice("Alice", "arisu_(blue_archive)")]
 		[Choice("Aru", "aru_(blue_archive)")]
 		[Choice("Hanae", "hanae_(blue_archive)")]
-		[Choice("Hanko", "hanko_(blue_archive)")]
+		[Choice("Hanko", "yuzu_(blue_archive)")]
 		[Choice("Hifumi", "hifumi_(blue_archive)")]
 		[Choice("Hina", "hina_(blue_archive)")]
 		[Choice("Hoshino", "hoshino_(blue_archive)")]
 		[Choice("Iroha", "iroha_(blue_archive)")]
-		[Choice("Junko", "kunko_(blue_archive)")]
+		[Choice("Junko", "junko_(blue_archive)")]
 		[Choice("Koharu", "koharu_(blue_archive)")]
 		[Choice("Kotori", "kotori_(blue_archive)")]
 		[Choice("Mari", "mari_(blue_archive)")]
@@ -113,7 +113,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[MinValue(1)] [MaxValue(100)] int images)
 	{
 		await DeferAsync(ephemeral: true, options: _options);
-		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{character}/{images}";
+		var url = $"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}{site}/{character}/{images}";
 		
 		string? response = null;
 		try { response = await Client.GetStringAsync(url); }
@@ -125,7 +125,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 				options: _options,
 				ephemeral: true); 
 		}
-		
+
 		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response!);
 		foreach (var item in jsonResponse!)
 			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
@@ -162,7 +162,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[MinValue(1)] [MaxValue(100)] int images)
 	{
 		await DeferAsync(ephemeral: true, options: _options);
-		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{vtuber}/{images}";
+		var url = $"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}{site}/{vtuber}/{images}";
 		
 		string? response = null;
 		try { response = await Client.GetStringAsync(url); }
@@ -210,7 +210,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[MinValue(1)] [MaxValue(100)] int images)
 	{
 		await DeferAsync(ephemeral: true, options: _options);
-		var url = $"https://cunnyapi.breadwas.uber.space/api/v1/{site}/{character}/{images}";
+		var url = $"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}{site}/{character}/{images}";
 		
 		string? response = null;
 		try { response = await Client.GetStringAsync(url); }
