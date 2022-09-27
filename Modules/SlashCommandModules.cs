@@ -17,18 +17,6 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		RetryMode = RetryMode.RetryRatelimit | RetryMode.Retry502 | RetryMode.RetryTimeouts,
 		UseSystemClock = false
 	};
-
-	/// <summary>
-	/// Allows the owner of the bot to, shut down the bot.
-	/// </summary>
-	[SlashCommand("shutdown", "Shutdowns the bot")]
-	[Discord.Interactions.RequireOwner]
-	// ReSharper disable once UnusedMember.Global
-	public async Task Shutdown() {
-		await DeferAsync(ephemeral: true);
-		await FollowupAsync("Shutting down...", ephemeral: true);
-		Environment.Exit(0);
-	}
 	
 	/// <summary>
 	/// Gets anime images based on tags from the CunnyAPI
@@ -62,7 +50,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 				options: _options,
 				ephemeral: true); 
 		}
-		
+
 		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response!);
 		foreach (var item in jsonResponse!)
 			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
@@ -94,13 +82,13 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Hanae", "hanae_(blue_archive)")]
 		[Choice("Hanko", "yuzu_(blue_archive)")]
 		[Choice("Hifumi", "hifumi_(blue_archive)")]
+		[Choice("Hibiki", "hibiki_(blue_archive)")]
 		[Choice("Hina", "hina_(blue_archive)")]
 		[Choice("Hoshino", "hoshino_(blue_archive)")]
 		[Choice("Iroha", "iroha_(blue_archive)")]
 		[Choice("Junko", "junko_(blue_archive)")]
 		[Choice("Koharu", "koharu_(blue_archive)")]
-		[Choice("Kotori", "kotori_(blue_archive)")]
-		[Choice("Mari", "mari_(blue_archive)")]
+		[Choice("Kokona", "kokona_(blue_archive)")]
 		[Choice("Midori", "midori_(blue_archive)")]
 		[Choice("Miyu", "miyu_(blue_archive)")]
 		[Choice("Momoi", "momoi_(blue_archive)")]
@@ -108,7 +96,6 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Natsu", "natsu_(blue_archive)")]
 		[Choice("Neru", "neru_(blue_archive)")]
 		[Choice("Nonomi", "nonomi_(blue_archive)")]
-		[Choice("Pina", "pina_(blue_archive)")]
 		[Choice("Serika", "serika_(blue_archive)")] string character,
 		[MinValue(1)] [MaxValue(100)] int images)
 	{

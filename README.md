@@ -5,15 +5,14 @@
 **CunnyBot** makes use of the [**CunnyAPI**](https://github.com/ProjectCuteAndFunny/CunnyApi) to fetch images. 
 
 # Commands
-Currently **CunnyBot** has five commands.
+Currently **CunnyBot** has four commands.
 ```
 /cunny site tags images
 /blue-archive site character images
 /genshin-impact site character images
 /vtuber site vtuber images
-/shutdown
 ```
-The **`Site`** option currently provides the follow choices: **`Gelbooru`**, **`Safebooru`**, **`Danbooru`**, **`Konachan`** and **`Yandere`**. The user is only able to choose one website per query.
+The **`Site`** option currently provides the following choices: **`Gelbooru`**, **`Safebooru`**, **`Danbooru`**, **`Konachan`** and **`Yandere`**. The user is only able to choose one website per query.
 
 The **`Character`** option provides a choice of a character based on the command.
 
@@ -21,21 +20,19 @@ The **`Tags`** option needs to contain tags that are valid based on the site the
 
 The **`Images`** option simply asks the user how many images the bot should post
 
-The **``/shutdown``** command can only be successfully run by the owner of the bot, and as the name suggests, it shuts down the bot.
-
 # Running the bot
-The bot can simply be run by running **``dotnet run``** at the root directory of the bot file structure.
+The bot can simply be ran by running **``dotnet run``** at the root directory of the bot file structure.
 
 Another option is to use **``dotnet publish``** You can read more about this at [**dotnet publish**](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish)
 
 # Notes
 The bot token is kept as an environment variable named: ``CUNNY_TOKEN``.
 
-The bot needs [CunnyAPI](https://github.com/ProjectCuteAndFunny/CunnyApi) to work fetch images, the bot gets the url from environment variable named: ``CUNNY_API_URL``
+**CunnyBot** needs [CunnyAPI](https://github.com/ProjectCuteAndFunny/CunnyApi) in order to function. **CunnyBot** gets the url for **CunnyAPI** from an environment variable named: ``CUNNY_API_URL``
 
 For registering a guild specific command, the id of the guild must be kept as an environment variable named: ``CUNNY_GUILD``
 
-Every slash command has the **``ephemeral``** set to **``true``** this means that nobody else can see or know that a user has run a slash command; only the person who ran the command can see the response. 
+Every slash command has **``ephemeral``** set to **``true``** this means that nobody else can see or know that a user has ran a slash command; only the person who ran the command can see the response. 
 
 # NuGet Packages
 **CunnyBot** makes uses of the following **NuGet** packages:
