@@ -89,7 +89,7 @@ public class NormalCommandModule : InteractionModuleBase<SocketInteractionContex
 		[Choice("Laplus", "laplus_darknesss")]
 		[Choice("Rushia", "uruha_rushia")] 
 		[Choice("Shion", "murasaki_shion")] string vtuber,
-		[MinValue(1)] [MaxValue(100)] int images)  => await GetImages(site, vtuber, images);
+		[MinValue(1)] [MaxValue(100)] int images) => await GetImages(site, vtuber, images);
 
 	/// <summary>
 	/// Returns images of Genshin Impact Characters
