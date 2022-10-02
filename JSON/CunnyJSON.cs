@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace CunnyBot.JSON;
 
-public abstract class CunnyJson
+public class CunnyJson
 {
     public class Root
     {

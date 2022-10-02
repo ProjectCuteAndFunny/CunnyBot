@@ -5,7 +5,7 @@ using Discord.Interactions;
 
 namespace CunnyBot.Modules;
 
-public class NormalCommandModule : InteractionModuleBase<SocketInteractionContext>
+public sealed class NormalCommandModule : InteractionModuleBase<SocketInteractionContext>
 {
 	private HttpClient HttpClient { get; } = new();
 	
@@ -103,15 +103,13 @@ public class NormalCommandModule : InteractionModuleBase<SocketInteractionContex
 		[Choice("Gelbooru", "gelbooru")]
 		[Choice("Konachan", "konachan")]
 		[Choice("Safebooru", "safebooru")]
-		[Choice("Yandere", "yandere")]
-		string site,
+		[Choice("Yandere", "yandere")] string site,
 		[Choice("Diona", "diona_(genshin_impact)")]
 		[Choice("Dori", "dori_(genshin_impact)")]
 		[Choice("Klee", "klee_(genshin_impact)")]
 		[Choice("Nahida", "nahida_(genshin_impact)")]
 		[Choice("Qiqi", "qiqi_(genshin_impact)")]
-		[Choice("Sayu", "sayu_(genshin_impact)")]
-		string character,
+		[Choice("Sayu", "sayu_(genshin_impact)")] string character,
 		[MinValue(1)] [MaxValue(100)] int images) => await GetImages(site, character, images);
 
 	private async Task GetImages(string site, string tags, int images)
@@ -137,7 +135,7 @@ public class NormalCommandModule : InteractionModuleBase<SocketInteractionContex
 			else
 				await FollowupAsync(
 					$"Couldn't post the {(images == 1 ? "image" : "images")}.\n" +
-					$"This is either because **{site}** is down, the **CunnyAPI** is down or you have entered invalid tags." +
+					$"This is because **{site}** or **CunnyAPI** is down\n" +
 					"Please try again later*",
 					options: Options,
 					ephemeral: true);

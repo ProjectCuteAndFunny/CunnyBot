@@ -1,8 +1,8 @@
 # **CunnyBot**
 
-**CunnyBot** is a Discord bot written in **C#** using the [**Discord.Net**](https://github.com/discord-net/Discord.Net) library. The main usage and goal of the bot is to provide images from sites like Gelbooru, Safebooru, etc... with tags chosen by users.
+**CunnyBot** is a Discord bot written in **C#** using the [**Discord.Net**](https://github.com/discord-net/Discord.Net) library. The main usage and goal of the bot is to provide images from sites like Gelbooru, Safebooru, etc... with tags chosen by the user.
 
-**CunnyBot** makes use of the [**CunnyAPI**](https://github.com/ProjectCuteAndFunny/CunnyApi) to fetch images. 
+**CunnyBot** makes use of the [**CunnyAPI**](https://github.com/ProjectCuteAndFunny/CunnyApi) to fetch images.
 
 # Commands
 Currently **CunnyBot** has four commands.
@@ -28,11 +28,11 @@ Another option is to use **``dotnet publish``** You can read more about this at 
 # Notes
 The bot token is kept as an environment variable named: ``CUNNY_TOKEN``.
 
-**CunnyBot** needs [CunnyAPI](https://github.com/ProjectCuteAndFunny/CunnyApi) in order to function. **CunnyBot** gets the url for **CunnyAPI** from an environment variable named: ``CUNNY_API_URL``
+**CunnyBot** requires [CunnyAPI](https://github.com/ProjectCuteAndFunny/CunnyApi) in order to function. **CunnyBot** gets the URL for **CunnyAPI** from an environment variable named: ``CUNNY_API_URL``
 
 For registering a guild specific command, the id of the guild must be kept as an environment variable named: ``CUNNY_GUILD``
 
-Every slash command has **``ephemeral``** set to **``true``** this means that nobody else can see or know that a user has ran a slash command; only the person who ran the command can see the response. 
+Every slash command has **``ephemeral``** set to **``true``** which means that nobody else can see or know that a user has ran a slash command; only the person who ran the command can see the response.
 
 # NuGet Packages
 **CunnyBot** makes uses of the following **NuGet** packages:
@@ -45,5 +45,4 @@ Discord.NET.Rest
 Discord.NET.WebSocket
 Microsoft.Extensions.DependencyInjection
 Microsoft.Extensions.Hosting
-Newtonsoft.Json
 ```
