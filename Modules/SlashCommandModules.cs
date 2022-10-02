@@ -1,17 +1,15 @@
+using System.Net.Http.Json;
 using CunnyBot.JSON;
 using Discord;
-using Discord.Commands;
 using Discord.Interactions;
-using Newtonsoft.Json;
 
 namespace CunnyBot.Modules;
 
-// ReSharper disable once UnusedType.Global
-public class SlashCommandModules : InteractionModuleBase<SocketInteractionContext>
+public class NormalCommandModule : InteractionModuleBase<SocketInteractionContext>
 {
-	private HttpClient Client { get; } = new();
-	private EmbedBuilder Embed { get; } = new();
-	private readonly RequestOptions _options = new()
+	private HttpClient HttpClient { get; } = new();
+	
+	private RequestOptions Options { get; } = new()
 	{
 		Timeout = 3000, 
 		RetryMode = RetryMode.RetryRatelimit | RetryMode.Retry502 | RetryMode.RetryTimeouts,
@@ -25,43 +23,14 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	/// <param name="tags">Tags to parse for</param>
 	/// <param name="images">Amount of images to post</param>
 	[SlashCommand("cunny", "Returns the anime images")]
-	[Alias("anime")]
-	// ReSharper disable once UnusedMember.Global
 	public async Task Cunny(
 		[Choice("Danbooru", "danbooru")]
 		[Choice("Gelbooru", "gelbooru")]
 		[Choice("Konachan", "konachan")]
 		[Choice("Safebooru", "safebooru")]
 		[Choice("Yandere", "yandere")] string site,
-		[Discord.Interactions.Summary(description: "You can combine multiple tags like this: blue_eyes skirt")]string tags,
-		[MinValue(1)] [MaxValue(100)] int images)
-	{
-		await DeferAsync(ephemeral: true, options: _options);
-		var url = $"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}{site}/{tags}/{images}";
-		
-		string? response = null;
-		try { response = await Client.GetStringAsync(url); }
-		catch (HttpRequestException e) { 
-			if (e.Message.Contains("500")) await FollowupAsync("Invalid tags", options: _options, ephemeral: true);
-			else await FollowupAsync(
-				$"Couldn't post the {(images == 1 ? "image" : "images")}.\n" +
-				$"This is either because **{site}** is down, the **CunnyAPI** is down or you have entered invalid tags." +
-				"Please try again later*",
-				options: _options,
-				ephemeral: true); 
-		}
-
-		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response!);
-		foreach (var item in jsonResponse!)
-			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
-				.WithFooter($"{item.Width}x{item.Height}")
-				.WithImageUrl(item.ImageUrl)
-				.WithTitle(item.Id.ToString())
-				.WithUrl(item.PostUrl)
-				.Build(),
-				options: _options,
-				ephemeral: true);
-	}
+		[Summary(description: "You can combine multiple tags like this: blue_eyes skirt")] string tags,
+		[MinValue(1)] [MaxValue(100)] int images) => await GetImages(site, tags, images);
 
 	/// <summary>
 	/// Gets images for an anime gacha game "Blue Archive" from a selected site.
@@ -70,13 +39,15 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	/// <param name="character">Character to parse for</param>
 	/// <param name="images">Amount of images to post</param>
 	[SlashCommand("blue-archive", "Returns images of blue archive")]
-	// ReSharper disable once UnusedMember.Global
 	public async Task Blue(
+		
 		[Choice("Danbooru", "danbooru")]
 		[Choice("Gelbooru", "gelbooru")]
 		[Choice("Konachan", "konachan")]
+		[Choice("Konachan", "konachan")]
 		[Choice("Safebooru", "safebooru")]
 		[Choice("Yandere", "yandere")] string site,
+		[MinValue(1)] [MaxValue(100)] int images,
 		[Choice("Alice", "arisu_(blue_archive)")]
 		[Choice("Aru", "aru_(blue_archive)")]
 		[Choice("Hanae", "hanae_(blue_archive)")]
@@ -96,34 +67,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Natsu", "natsu_(blue_archive)")]
 		[Choice("Neru", "neru_(blue_archive)")]
 		[Choice("Nonomi", "nonomi_(blue_archive)")]
-		[Choice("Serika", "serika_(blue_archive)")] string character,
-		[MinValue(1)] [MaxValue(100)] int images)
-	{
-		await DeferAsync(ephemeral: true, options: _options);
-		var url = $"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}{site}/{character}/{images}";
-		
-		string? response = null;
-		try { response = await Client.GetStringAsync(url); }
-		catch (HttpRequestException) {
-			await FollowupAsync(
-				$"Couldn't post the {(images == 1 ? "image" : "images")}.\n" +
-				$"This is either because **{site}** is down or the **CunnyAPI** is down.\n*" +
-				"Please try again later*",
-				options: _options,
-				ephemeral: true); 
-		}
-
-		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response!);
-		foreach (var item in jsonResponse!)
-			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
-					.WithFooter($"{item.Width}x{item.Height}")
-					.WithImageUrl(item.ImageUrl)
-					.WithTitle(item.Id.ToString())
-					.WithUrl(item.PostUrl)
-					.Build(),
-				options: _options,
-				ephemeral: true);
-	}
+		[Choice("Serika", "serika_(blue_archive)")] string character = "hibiki_(blue_archive)") => await GetImages(site, character, images);
 
 	/// <summary>
 	///  Returns images of VTubers.
@@ -132,7 +76,6 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	/// <param name="vtuber">VTuber to parse for</param>
 	/// <param name="images">Amount of images to post</param>
 	[SlashCommand("vtuber", "Returns images of VTubers")]
-	// ReSharper disable once UnusedMember.Global
 	public async Task VTubers(
 		[Choice("Danbooru", "danbooru")]
 		[Choice("Gelbooru", "gelbooru")]
@@ -146,33 +89,7 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Laplus", "laplus_darknesss")]
 		[Choice("Rushia", "uruha_rushia")] 
 		[Choice("Shion", "murasaki_shion")] string vtuber,
-		[MinValue(1)] [MaxValue(100)] int images)
-	{
-		await DeferAsync(ephemeral: true, options: _options);
-		var url = $"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}{site}/{vtuber}/{images}";
-		
-		string? response = null;
-		try { response = await Client.GetStringAsync(url); }
-		catch (HttpRequestException) {
-			await FollowupAsync(
-				$"Couldn't post the {(images == 1 ? "image" : "images")}.\n" +
-				$"This is either because **{site}** is down or the **CunnyAPI** is down.\n" +
-				"*Please try again later*",
-				options: _options,
-				ephemeral: true); 
-		}
-		
-		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response!);
-		foreach (var item in jsonResponse!)
-			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
-					.WithFooter($"{item.Width}x{item.Height}")
-					.WithImageUrl(item.ImageUrl)
-					.WithTitle(item.Id.ToString())
-					.WithUrl(item.PostUrl)
-					.Build(),
-				options: _options,
-				ephemeral: true);
-	}
+		[MinValue(1)] [MaxValue(100)] int images) => await GetImages(site, vtuber, images);
 
 	/// <summary>
 	/// Returns images of Genshin Impact Characters
@@ -181,7 +98,6 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 	/// <param name="character">Character to parse for</param>
 	/// <param name="images">Amount of images to post</param>
 	[SlashCommand("genshin-impact", "Returns images of Genshin Impact")]
-	// ReSharper disable once UnusedMember.Global
 	public async Task GenshinImpact(
 		[Choice("Danbooru", "danbooru")]
 		[Choice("Gelbooru", "gelbooru")]
@@ -194,31 +110,58 @@ public class SlashCommandModules : InteractionModuleBase<SocketInteractionContex
 		[Choice("Nahida","nahida_(genshin_impact)")]
 		[Choice("Qiqi","qiqi_(genshin_impact)")]
 		[Choice("Sayu","sayu_(genshin_impact)")] string character, 
-		[MinValue(1)] [MaxValue(100)] int images)
+		[MinValue(1)] [MaxValue(100)] int images) => await GetImages(site, character, images);
+
+	private async Task GetImages(string site, string tags, int images)
 	{
-		await DeferAsync(ephemeral: true, options: _options);
-		var url = $"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}{site}/{character}/{images}";
+		await DeferAsync(ephemeral: true, options: Options);
 		
-		string? response = null;
-		try { response = await Client.GetStringAsync(url); }
-		catch (HttpRequestException) {
-			await FollowupAsync(
-				$"Couldn't post the {(images == 1 ? "image" : "images")}.\n" +
-				$"This is either because **{site}** is down or the **CunnyAPI** is down.\n" +
-				"*Please try again later*",
-				options: _options,
-				ephemeral: true); 
-		}
-		
-		var jsonResponse = JsonConvert.DeserializeObject<List<CunnyJson>>(response!);
-		foreach (var item in jsonResponse!)
-			await FollowupAsync(embed: Embed.WithColor((uint)new Random().Next(0, 16777215))
-					.WithFooter($"{item.Width}x{item.Height}")
-					.WithImageUrl(item.ImageUrl)
-					.WithTitle(item.Id.ToString())
-					.WithUrl(item.PostUrl)
-					.Build(),
-				options: _options,
+		if(site.Contains("danbooru") && tags.Split(' ').Length > 2)
+			await FollowupAsync($"You can only have 2 tags for **{site}**.\n*Please try again with 2 tags*",
+				options: Options,
 				ephemeral: true);
+		
+		var url = $"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}{site}/{tags}/{images}";
+
+		List<CunnyJson.Root>? response = null;
+		try
+		{
+			response = await HttpClient.GetFromJsonAsync<List<CunnyJson.Root>>(url);
+		}
+		catch (HttpRequestException e)
+		{
+			if (e.Message.Contains("500")) await FollowupAsync("Invalid tags", options: Options, ephemeral: true);
+			else
+				await FollowupAsync(
+					$"Couldn't post the {(images == 1 ? "image" : "images")}.\n" +
+					$"This is either because **{site}** is down, the **CunnyAPI** is down or you have entered invalid tags." +
+					"Please try again later*",
+					options: Options,
+					ephemeral: true);
+		}
+		catch (Exception)
+		{
+			await FollowupAsync($"Could not fetch images from {site}", options: Options, ephemeral: true);
+		}
+
+		try
+		{
+			foreach (var item in response!)
+				await FollowupAsync(embed: new EmbedBuilder()
+						.WithColor((uint)new Random().Next(0, 16777215))
+						.WithFooter($"{item.Width}x{item.Height}")
+						.WithImageUrl(item.ImageUrl)
+						.WithTitle(item.Id.ToString())
+						.WithUrl(item.PostUrl)
+						.Build(),
+					options: Options,
+					ephemeral: true);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			await FollowupAsync($"Could not fetch images from {site}", options: Options, ephemeral: true);
+			throw;
+		}
 	}
 }
