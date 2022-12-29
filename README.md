@@ -32,7 +32,7 @@ The bot token is kept as an environment variable named: ``CUNNY_TOKEN``.
 
 For registering a guild specific command, the id of the guild must be kept as an environment variable named: ``CUNNY_GUILD``
 
-Every slash command has **``ephemeral``** set to **``true``** which means that nobody else can see or know that a user has ran a slash command; only the person who ran the command can see the response.
+Every slash command is **ephemeral**
 
 # NuGet Packages
 **CunnyBot** makes uses of the following **NuGet** packages:
@@ -40,9 +40,9 @@ Every slash command has **``ephemeral``** set to **``true``** which means that n
 Discord.NET
 Discord.NET.Commands
 Discord.NET.Core
-Discord.NET.Interactions
-Discord.NET.Rest
 Discord.NET.WebSocket
 Microsoft.Extensions.DependencyInjection
 Microsoft.Extensions.Hosting
+Serilog
+Serilog.Sinks.Console
 ```

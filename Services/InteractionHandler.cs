@@ -1,6 +1,4 @@
 using System.Reflection;
-using Discord;
-using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace CunnyBot.Services;
@@ -26,7 +24,7 @@ public class InteractionHandler
         Client.InteractionCreated += HandleInteraction;
         _= Client.SetGameAsync("Blue Archive", "https://www.twitch.tv/directory/game/Blue%20Archive", ActivityType.Competing);
 
-        // Process the command execution results 
+        // Process the command execution results
         Commands.SlashCommandExecuted += SlashCommandExecuted;
         Commands.ContextCommandExecuted += ContextCommandExecuted;
         Commands.ComponentCommandExecuted += ComponentCommandExecuted;
