@@ -1,5 +1,5 @@
+using CunnyBot;
 using CunnyBot.Services;
-using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,22 +13,17 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 var host = Host.CreateDefaultBuilder()
-    .ConfigureServices((_, services) => {
+    .ConfigureServices((_, services) =>
+    {
         services.AddSingleton(_ => new DiscordSocketClient(new DiscordSocketConfig
-            {
-                GatewayIntents = GatewayIntents.Guilds | GatewayIntents.DirectMessages,
-                // ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
-                LogLevel = LogSeverity.Info | LogSeverity.Error,
-                UseSystemClock = false
-            }))
-            .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
-            .AddSingleton<InteractionHandler>()
-            .AddSingleton(_ => new CommandService(new CommandServiceConfig
-            {
-                // ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
-                LogLevel = LogSeverity.Info | LogSeverity.Error,
-                DefaultRunMode = Discord.Commands.RunMode.Async
-            }));
+        {
+            GatewayIntents = GatewayIntents.Guilds | GatewayIntents.DirectMessages,
+            // ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
+            LogLevel = LogSeverity.Info
+        }));
+        services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
+        services.AddSingleton<InteractionHandler>();
+        services.AddSingleton<RateLimitService>();
     })
     .Build();
 

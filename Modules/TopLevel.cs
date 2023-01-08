@@ -1,23 +1,15 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using CunnyBot.JSON;
+using static CunnyBot.GlobalTasks;
 
 namespace CunnyBot.Modules;
 
 public sealed partial class TopLevel : InteractionModuleBase<SocketInteractionContext>
 {
-    private HttpClient HttpClient { get; } = new();
-    private RequestOptions Options { get; } = new()
+    private async Task GetImages(string site, string tags, int images, int skip)
     {
-        Timeout = 3000,
-        RetryMode = RetryMode.AlwaysRetry,
-        UseSystemClock = false
-    };
-
-    private async Task GetImages(string site, string tags, int images)
-    {
-        await DeferAsync(ephemeral: true, options: Options);
-
         if (site.Contains("danbooru") && tags.Split(' ').Length > 2)
         {
             await FollowupAsync($"You can only use 2 tags for **{site}**.",
@@ -27,33 +19,34 @@ public sealed partial class TopLevel : InteractionModuleBase<SocketInteractionCo
         }
 
         var request =
-            await HttpClient.GetAsync($"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}/{site}/{tags}/{images}");
+            await GlobalTasks.HttpClient.GetAsync(
+                $"{Environment.GetEnvironmentVariable("CUNNY_API_URL")}/api/v1/{site}/{tags}/{images};{skip}");
 
-        if (request.StatusCode is HttpStatusCode.NotFound)
-        {
-            await FollowupAsync($"**API IS DOWN** - 404",
-                ephemeral: true,
-                options: Options);
-            return;
-        }
+        if (request.StatusCode is not HttpStatusCode.OK)
+            await FollowupAsync("Invalid tags.", ephemeral: true, options: Options);
 
-        if (request.StatusCode is not HttpStatusCode.Accepted)
+        var response = await request.Content.ReadFromJsonAsync<List<CunnyJson>>();
+
+        if (response is null)
         {
             await FollowupAsync("An error occured", ephemeral: true, options: Options);
             return;
         }
 
-        var response = await request.Content.ReadFromJsonAsync<List<CunnyJson.Root>>();
-
-        foreach (var item in response!)
-            await FollowupAsync(ephemeral: true,
-                options: Options,
+        StringBuilder imageTags = new();
+        foreach (var item in response.Where(item => !string.IsNullOrEmpty(item.ImageUrl)))
+        {
+            imageTags.AppendJoin(", ", item.Tags);
+            await FollowupAsync(ephemeral: true, options: Options,
                 embed: new EmbedBuilder()
-                    .WithColor((uint)new Random().Next(0, 16777215))
-                    .WithFooter($"{item.Width}x{item.Height}")
+                    .WithColor((uint)Random.Shared.Next(0, 16777215))
+                    .WithDescription($"{item.Width}x{item.Height}")
+                    .WithFooter(imageTags.Length > 2048 ? $"{imageTags.ToString()[..2045]}..." : imageTags.ToString())
                     .WithImageUrl(item.ImageUrl)
                     .WithTitle(item.Id.ToString())
                     .WithUrl(item.PostUrl)
+                    .WithAuthor(item.OwnerName)
                     .Build());
+        }
     }
 }

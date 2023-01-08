@@ -5,16 +5,14 @@ public sealed partial class TopLevel
     /// <summary>
     /// Returns images of Genshin Impact Characters
     /// </summary>
-    /// <param name="site">Site to parse from</param>
     /// <param name="character">Character to parse for</param>
     /// <param name="images">Amount of images to post</param>
+    /// <param name="skip">Skip a page(e.g:1 will skip to the second page and start indexing from it)</param>
+    /// <param name="site">Site to parse from</param>
+    [RateLimit]
+    [ApiCheck]
     [SlashCommand("genshin-impact", "Returns images of Genshin Impact")]
     public async Task GenshinImpact(
-        [Choice("Danbooru", "danbooru")]
-        [Choice("Gelbooru", "gelbooru")]
-        [Choice("Konachan", "konachan")]
-        [Choice("Safebooru", "safebooru")]
-        [Choice("Yandere", "yandere")] string site,
         [Choice("Amber", "amber_(genshin_impact)")]
         [Choice("Barbara", "barbara_(genshin_impact)")]
         [Choice("Collei", "collei_(genshin_impact)")]
@@ -28,6 +26,15 @@ public sealed partial class TopLevel
         [Choice("Qiqi", "qiqi_(genshin_impact)")]
         [Choice("Sayu", "sayu_(genshin_impact)")]
         [Choice("Sucrose", "sucrose_(genshin_impact)")]
-        [Choice("Yun Jin", "yun_jin_(genshin_impact)")] string character,
-        [MinValue(1)] [MaxValue(100)] int images) => await GetImages(site, character, images);
+        [Choice("Yun Jin", "yun_jin_(genshin_impact)")]
+        string character,
+        [MinValue(1)] [MaxValue(100)] int images, int skip = 0,
+        [Choice("Danbooru", "danbooru")]
+        [Choice("Gelbooru", "gelbooru")]
+        [Choice("Konachan", "konachan")]
+        [Choice("Safebooru", "safebooru")]
+        [Choice("Yandere", "yandere")]
+        string site = "safebooru")
+        => await DeferAsync(true, GlobalTasks.Options)
+            .ContinueWith(async _ => await GetImages(site, character, images, skip));
 }
